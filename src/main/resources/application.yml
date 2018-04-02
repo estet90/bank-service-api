@@ -1,0 +1,10 @@
+cxf.path: /bank-services
+
+spring:
+  datasource:
+    schema: classpath:/data/hsqldb/structure.sql
+    data: classpath:/data/hsqldb/insert.sql
+
+  jpa.properties.hibernate:
+    show_sql: true
+    format_sql: true
