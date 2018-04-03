@@ -2,42 +2,49 @@ package ru.kononov.tinkoffbank.bankservices.api.entities;
 
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import ru.kononov.tinkoffbank.bankservices.entities.Application;
+import ru.kononov.tinkoffbank.bankservices.exceptions.BankServicesException;
 
-@Getter
-@Setter
-@ToString
 @NoArgsConstructor
 @XmlRootElement(name = "APPLICATION")
 public class ApplicationDto {
 
-	@JsonProperty("APPLICATION_ID")
-	private Long applicationId;
+	Application application;
 
-	@JsonProperty("CONTACT_ID")
-	private Long contactId;
+	public ApplicationDto(Application application) throws BankServicesException {
+		if (application == null) {
+			throw new BankServicesException("Передан пустой объект типа \"Заявка\"");
+		}
+		if (application.getContact() == null) {
+			throw new BankServicesException("К заявке не привязан контакт");
+		}
+		this.application = application;
+	}
 
-	@JsonProperty("PRODUCT_NAME")
-	private String productName;
+	@XmlElement(name = "APPLICATION_ID")
+	public Long getApplicationId() {
+		return application.getApplicationId();
+	}
 
-	@JsonProperty("DT_CREATED")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy hh:mm:ss")
-	private Date dateCreated;
+	@XmlElement(name = "CONTACT_ID")
+	public Long getContactId() {
+		return application.getContact().getContactId();
+	}
 
-	public ApplicationDto(Application application) {
-		this.applicationId = application.getApplicationId();
-		this.contactId = application.getContact().getContactId();
-		this.productName = application.getProductName();
-		this.dateCreated = application.getDateCreated();
+	@XmlElement(name = "DT_CREATED")
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	public Date getDateCreated() {
+		return application.getDateCreated();
+	}
+
+	@XmlElement(name = "PRODUCT_NAME")
+	public String getProductName() {
+		return application.getProductName();
 	}
 
 }

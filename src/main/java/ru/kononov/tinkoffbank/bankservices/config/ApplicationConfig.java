@@ -19,17 +19,19 @@ public class ApplicationConfig {
 
 	@Autowired
 	private Bus bus;
-	@Autowired
-	private HttpInterceptor httpInterceptor;
+
 	@Autowired
 	private ContactsController contactsController;
+
+	@Autowired
+	private HttpInterceptor httpInterceptor;
 
 	@Bean
 	public Server rsServer() {
 		JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
 		endpoint.setProvider(new JacksonJaxbJsonProvider());
 		endpoint.setBus(bus);
-		endpoint.setServiceBeans(Arrays.<Object>asList(contactsController));
+		endpoint.setServiceBeans(Arrays.asList(contactsController));
 		endpoint.setAddress("/api");
 		endpoint.setFeatures(Arrays.asList(new Swagger2Feature()));
 		endpoint.getBus().getOutInterceptors().add(httpInterceptor);
