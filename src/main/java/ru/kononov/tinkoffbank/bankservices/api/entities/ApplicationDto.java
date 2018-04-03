@@ -1,12 +1,14 @@
 package ru.kononov.tinkoffbank.bankservices.api.entities;
 
-import java.io.Serializable;
 import java.util.Date;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import ru.kononov.tinkoffbank.bankservices.entities.Application;
@@ -14,9 +16,9 @@ import ru.kononov.tinkoffbank.bankservices.entities.Application;
 @Getter
 @Setter
 @ToString
-public class ApplicationDto implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+@NoArgsConstructor
+@XmlRootElement(name = "APPLICATION")
+public class ApplicationDto {
 
 	@JsonProperty("APPLICATION_ID")
 	private Long applicationId;

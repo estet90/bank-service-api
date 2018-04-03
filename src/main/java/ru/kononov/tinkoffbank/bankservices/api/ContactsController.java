@@ -1,6 +1,5 @@
 package ru.kononov.tinkoffbank.bankservices.api;
 
-import javax.persistence.NoResultException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -39,16 +38,16 @@ public class ContactsController {
 			@ApiResponse(code = 500, message = "Необработанная ошибка")})
 	public Response getLastProductByContactId(
 			@ApiParam(value = "Идентификатор контакта", required = true) @PathParam("contactId") long contactId) {
-		Application application = null;
 		try {
-			application = applicationRepository.findTopByContactContactIdOrderByDateCreatedDesc(contactId);
-		} catch (NoResultException e) {
-			return Response.status(Status.NOT_FOUND).build();
+			Application application = applicationRepository.findTopByContactContactIdOrderByDateCreatedDesc(contactId);
+			if (application == null) {
+				return Response.status(Status.NOT_FOUND).build();
+			}
+			ApplicationDto applicationDto = new ApplicationDto(application);
+			return Response.ok(applicationDto).build();
 		} catch (Exception e) {
 			return Response.serverError().build();
 		}
-		ApplicationDto applicationDto = new ApplicationDto(application);
-		return Response.ok(applicationDto).build();
 	}
 
 }
