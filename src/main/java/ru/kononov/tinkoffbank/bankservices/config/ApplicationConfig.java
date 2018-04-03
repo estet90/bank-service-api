@@ -13,28 +13,26 @@ import org.springframework.context.annotation.Configuration;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 import ru.kononov.tinkoffbank.bankservices.api.ContactsController;
+import ru.kononov.tinkoffbank.bankservices.api.providers.RestResponseFilter;
 
 @Configuration
 public class ApplicationConfig {
 
 	@Autowired
 	private Bus bus;
-
 	@Autowired
 	private ContactsController contactsController;
-
 	@Autowired
-	private HttpInterceptor httpInterceptor;
+	private RestResponseFilter restResponseFilter;
 
 	@Bean
 	public Server rsServer() {
 		JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
-		endpoint.setProvider(new JacksonJaxbJsonProvider());
+		endpoint.setProviders(Arrays.asList(new JacksonJaxbJsonProvider(), restResponseFilter));
 		endpoint.setBus(bus);
-		endpoint.setServiceBeans(Arrays.asList(contactsController));
+		endpoint.setServiceBean(contactsController);
 		endpoint.setAddress("/api");
 		endpoint.setFeatures(Arrays.asList(new Swagger2Feature()));
-		endpoint.getBus().getOutInterceptors().add(httpInterceptor);
 		return endpoint.create();
 	}
 
