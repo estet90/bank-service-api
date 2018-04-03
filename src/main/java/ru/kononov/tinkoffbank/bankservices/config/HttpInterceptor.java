@@ -1,5 +1,8 @@
 package ru.kononov.tinkoffbank.bankservices.config;
 
+
+import javax.ws.rs.core.Response.Status;
+
 import org.apache.cxf.annotations.Provider;
 import org.apache.cxf.annotations.Provider.Type;
 import org.apache.cxf.interceptor.Fault;
@@ -21,7 +24,10 @@ public class HttpInterceptor extends AbstractPhaseInterceptor<Message> {
 
 	@Override
 	public void handleMessage(Message message) throws Fault {
-		System.out.println("JAXRS response status code is " + message.get(Message.RESPONSE_CODE));
+		int status = (int) message.get(Message.RESPONSE_CODE);
+		if (status != Status.OK.getStatusCode()) {
+			log.info("JAXRS response status code is {}", message.get(Message.RESPONSE_CODE));
+		}
 	}
 
 }
