@@ -1,4 +1,4 @@
-package ru.kononov.tinkoffbank.bankservices.config;
+package ru.kononov.tinkoffbank.bankservices.api.config;
 
 import java.util.Arrays;
 
@@ -13,10 +13,18 @@ import org.springframework.context.annotation.Configuration;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 import ru.kononov.tinkoffbank.bankservices.api.ContactsController;
+import ru.kononov.tinkoffbank.bankservices.api.providers.InvalidDataAccessResourceUsageExceptionMapper;
 import ru.kononov.tinkoffbank.bankservices.api.providers.RestResponseFilter;
 
+/**
+ * 
+ * @author dkononov
+ * 
+ * конфигурационный файл Apache CXF
+ *
+ */
 @Configuration
-public class ApplicationConfig {
+public class CxfRestConfig {
 
 	@Autowired
 	private Bus bus;
@@ -24,11 +32,19 @@ public class ApplicationConfig {
 	private ContactsController contactsController;
 	@Autowired
 	private RestResponseFilter restResponseFilter;
+	@Autowired
+	private InvalidDataAccessResourceUsageExceptionMapper invalidDataAccessResourceUsageExceptionMapper;
 
+	/**
+	 * 
+	 * конфигурация сервера: подключение сваггера, фильтров, контроллеров
+	 * 
+	 * @return {@link Server}
+	 */
 	@Bean
 	public Server rsServer() {
 		JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
-		endpoint.setProviders(Arrays.asList(new JacksonJaxbJsonProvider(), restResponseFilter));
+		endpoint.setProviders(Arrays.asList(new JacksonJaxbJsonProvider(), restResponseFilter, invalidDataAccessResourceUsageExceptionMapper));
 		endpoint.setBus(bus);
 		endpoint.setServiceBean(contactsController);
 		endpoint.setAddress("/api");

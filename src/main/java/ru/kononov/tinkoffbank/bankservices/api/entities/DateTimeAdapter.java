@@ -6,6 +6,12 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+/**
+ * 
+ * @author dkononov
+ * конвертор для отображения даты в формате dd.MM.yyyy HH:mm:ss в XML/JSON
+ *
+ */
 public class DateTimeAdapter extends XmlAdapter<String, Date> {
 
 	private final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");

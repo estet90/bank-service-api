@@ -8,14 +8,32 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import lombok.NoArgsConstructor;
 import ru.kononov.tinkoffbank.bankservices.entities.Application;
+import ru.kononov.tinkoffbank.bankservices.entities.Contact;
 import ru.kononov.tinkoffbank.bankservices.exceptions.BankServicesException;
 
+/**
+ * 
+ * @author dkononov
+ * 
+ * класс-обёртка для {@link Application}
+ * <p>
+ * используется для отображения данных в форматах JSON/XML
+ * добавлено отображение поля {@link Contact#getContactId()}
+ * 
+ *
+ */
 @NoArgsConstructor
 @XmlRootElement(name = "APPLICATION")
 public class ApplicationDto {
 
 	Application application;
 
+	/**
+	 * 
+	 * @param application заявка
+	 * @throws BankServicesException если в конструктор передан null или заявка не содержит контакт
+	 * 
+	 */
 	public ApplicationDto(Application application) throws BankServicesException {
 		if (application == null) {
 			throw new BankServicesException("Передан пустой объект типа \"Заявка\"");

@@ -1,11 +1,9 @@
 package ru.kononov.tinkoffbank.bankservices.api;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -18,7 +16,15 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import ru.kononov.tinkoffbank.bankservices.api.handlers.ContactsControllerHandler;
+import ru.kononov.tinkoffbank.bankservices.exceptions.BankServicesException;
 
+/**
+ * 
+ * @author dkononov
+ *
+ * REST API для получения данных по контактам и их заявкам
+ *
+ */
 @Component
 @Path("/contacts")
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -28,15 +34,23 @@ public class ContactsController {
 	@Autowired
 	private ContactsControllerHandler contactsControllerHandler;
 
+	/**
+	 * получение последней заявки данного контакта
+	 * 
+	 * @param contactId идентификатор контакта
+	 * @return последняя заявка контакта
+	 * @throws BankServicesException если к заявке не привязан контакт. В данном сервисе воспроизвести невозможно.
+	 */
 	@GET
 	@Path("/{contactId}/products/last")
 	@ApiOperation(value = "Найти последнюю заявку по идентификатору клиента")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Успех"),
 			@ApiResponse(code = 404, message = "Контакт не найден"),
 			@ApiResponse(code = 500, message = "Ошибка на стороне сервера") })
-	public Response getLastProductByContactId(@Context HttpServletRequest request,
-			@ApiParam(value = "Идентификатор контакта", required = true) @PathParam("contactId") long contactId) {
-		return contactsControllerHandler.getLastProductByContactId(request, contactId);
+	public Response getLastProductByContactId(
+			@ApiParam(value = "Идентификатор контакта", required = true) @PathParam("contactId") long contactId
+			) throws BankServicesException {
+		return contactsControllerHandler.getLastProductByContactId(contactId);
 	}
 
 }

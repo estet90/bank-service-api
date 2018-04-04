@@ -14,6 +14,13 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 
+ * @author dkononov
+ * 
+ * сущность заявка
+ *
+ */
 @Getter
 @Setter
 @Entity
