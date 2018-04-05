@@ -30,20 +30,20 @@ public class ApplicationRepositoryTest {
 
 	private Contact contact = new Contact();
 
-	private Map<String, Application> applications = new HashMap<>();
+	private Map<String, Application> applicationsMap = new HashMap<>();
 
 	@Before
 	public void setUp() throws Exception {
 		contact = entityManager.persist(contact);
 		Arrays.stream(new String[] { "Кредит", "Ипотека", "Вклад" }).forEach(productName -> {
 			Application application = entityManager.persist(new Application(contact, productName));
-			applications.put(productName, application);
+			applicationsMap.put(productName, application);
 		});
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		applications.entrySet().forEach(entry -> {
+		applicationsMap.entrySet().forEach(entry -> {
 			entityManager.remove(entry.getValue());
 		});
 		entityManager.remove(contact);
@@ -53,7 +53,7 @@ public class ApplicationRepositoryTest {
 	public void testFindTopByContactContactIdOrderByDateCreatedDesc() {
 		Application last = applicationRepository
 				.findTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc(contact.getContactId());
-		assertEquals(applications.get("Вклад"), last);
+		assertEquals(applicationsMap.get("Вклад"), last);
 	}
 
 }
