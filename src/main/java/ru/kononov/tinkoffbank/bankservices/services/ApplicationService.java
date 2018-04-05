@@ -27,7 +27,7 @@ public class ApplicationService {
 	 * @return заявка
 	 */
 	public Application getLastProductByContactId(Long contactId) {
-		return applicationRepository.findTopByContactContactIdOrderByDateCreatedDesc(contactId);
+		return applicationRepository.findTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc(contactId);
 	}
 
 }

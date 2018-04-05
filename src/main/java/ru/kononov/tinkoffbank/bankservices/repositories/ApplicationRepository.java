@@ -22,6 +22,6 @@ public interface ApplicationRepository extends PagingAndSortingRepository<Applic
 	 * @param contactId
 	 * @return заявка
 	 */
-	Application findTopByContactContactIdOrderByDateCreatedDesc(Long contactId);
+	Application findTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc(Long contactId);
 
 }

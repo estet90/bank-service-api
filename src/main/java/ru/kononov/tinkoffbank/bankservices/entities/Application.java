@@ -11,8 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 
@@ -21,11 +21,17 @@ import lombok.Setter;
  * сущность заявка
  *
  */
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "APPLICATION")
 public class Application {
+	
+	public Application(Contact contact, String productName) {
+		this.contact = contact;
+		this.productName = productName;
+		this.dateCreated = new Date();
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
