@@ -11,6 +11,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -22,9 +23,14 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "CONTACT")
 public class Contact {
+
+	public Contact(Long contactId) {
+		this.contactId = contactId;
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

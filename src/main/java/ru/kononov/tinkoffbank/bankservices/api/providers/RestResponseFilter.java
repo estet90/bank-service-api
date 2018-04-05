@@ -50,7 +50,7 @@ public class RestResponseFilter implements ContainerResponseFilter {
 	}
 
 	/**
-	 * редирект на страницу http://host:port/bank-services/api/service
+	 * редирект на страницу http://host:port/bank-services/api/services
 	 * 
 	 * @param message контекст запроса
 	 * @throws IOException при ошибках ввода/вывода
@@ -61,7 +61,7 @@ public class RestResponseFilter implements ContainerResponseFilter {
 		// получаемое из контекста значение /bank-services/api
 		String contextPath = (String) message.get(Message.BASE_PATH);
 		String redirectUrl = new StringBuilder(httpBasePath).append(contextPath).append(swaggerSuffix).toString();
-		HttpServletResponse responseFacade = (HttpServletResponse) message.get(AbstractHTTPDestination.HTTP_REQUEST);
+		HttpServletResponse responseFacade = (HttpServletResponse) message.get(AbstractHTTPDestination.HTTP_RESPONSE);
 		responseFacade.sendRedirect(redirectUrl);
 	}
 

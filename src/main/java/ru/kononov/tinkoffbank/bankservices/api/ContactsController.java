@@ -6,6 +6,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,8 +16,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import ru.kononov.tinkoffbank.bankservices.api.handlers.ContactsControllerHandler;
+import ru.kononov.tinkoffbank.bankservices.api.entities.ApplicationDto;
+import ru.kononov.tinkoffbank.bankservices.entities.Application;
 import ru.kononov.tinkoffbank.bankservices.exceptions.BankServicesException;
+import ru.kononov.tinkoffbank.bankservices.services.ApplicationService;
 
 /**
  * 
@@ -32,7 +35,7 @@ import ru.kononov.tinkoffbank.bankservices.exceptions.BankServicesException;
 public class ContactsController {
 
 	@Autowired
-	private ContactsControllerHandler contactsControllerHandler;
+	private ApplicationService applicationService;
 
 	/**
 	 * получение последней заявки данного контакта
@@ -42,7 +45,7 @@ public class ContactsController {
 	 * @throws BankServicesException если к заявке не привязан контакт. В данном сервисе воспроизвести невозможно.
 	 */
 	@GET
-	@Path("/{contactId}/products/last")
+	@Path("/{contactId}/applications/last")
 	@ApiOperation(value = "Найти последнюю заявку по идентификатору клиента")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Успех"),
 			@ApiResponse(code = 404, message = "Контакт не найден"),
@@ -50,7 +53,12 @@ public class ContactsController {
 	public Response getLastProductByContactId(
 			@ApiParam(value = "Идентификатор контакта", required = true) @PathParam("contactId") long contactId
 			) throws BankServicesException {
-		return contactsControllerHandler.getLastProductByContactId(contactId);
+		Application application = applicationService.getLastProductByContactId(contactId);
+		if (application == null) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+		ApplicationDto applicationDto = new ApplicationDto(application);
+		return Response.ok(applicationDto).build();
 	}
 
 }

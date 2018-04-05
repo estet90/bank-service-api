@@ -3,8 +3,8 @@ package ru.kononov.tinkoffbank.bankservices.repositories;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,30 +30,30 @@ public class ApplicationRepositoryTest {
 
 	private Contact contact = new Contact();
 
-	private Map<String, Application> applicationsMap = new HashMap<>();
+	private List<Application> applicationsList = new LinkedList<>();
 
 	@Before
 	public void setUp() throws Exception {
 		contact = entityManager.persist(contact);
 		Arrays.stream(new String[] { "Кредит", "Ипотека", "Вклад" }).forEach(productName -> {
 			Application application = entityManager.persist(new Application(contact, productName));
-			applicationsMap.put(productName, application);
+			applicationsList.add(application);
 		});
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		applicationsMap.entrySet().forEach(entry -> {
-			entityManager.remove(entry.getValue());
+		applicationsList.stream().forEach(application -> {
+			entityManager.remove(application);
 		});
 		entityManager.remove(contact);
 	}
 
 	@Test
-	public void testFindTopByContactContactIdOrderByDateCreatedDesc() {
+	public void testFindTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc() {
 		Application last = applicationRepository
 				.findTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc(contact.getContactId());
-		assertEquals(applicationsMap.get("Вклад"), last);
+		assertEquals(((LinkedList<Application>)applicationsList).getLast(), last);
 	}
 
 }

@@ -2,12 +2,11 @@ package ru.kononov.tinkoffbank.bankservices.services;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,9 +31,9 @@ public class ApplicationServiceTest {
 	@Autowired
 	private ApplicationService applicationService;
 
-	private Contact contact = new Contact();
+	private Contact contact = new Contact(1L);
 
-	private Map<String, Application> applicationsMap = new HashMap<>(0);
+	private List<Application> applicationsList = new LinkedList<>();
 
 	@TestConfiguration
 	static class ApplicationServiceTestContextConfiguration {
@@ -43,12 +42,13 @@ public class ApplicationServiceTest {
 		public ApplicationService applicationService() {
 			return new ApplicationService();
 		}
+
 	}
 
 	@Before
 	public void setUp() throws Exception {
 		fillData();
-		Application last = contact.getApplications().stream()
+		Application last = applicationsList.stream()
 				.max(Comparator.comparing(Application::getDateCreated).thenComparing(Application::getApplicationId)).get();
 		Mockito.when(applicationRepository
 				.findTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc(contact.getContactId()))
@@ -56,21 +56,19 @@ public class ApplicationServiceTest {
 	}
 
 	private void fillData() {
-		contact.setContactId(1L);
 		Date currentDate = new Date();
 		Arrays.stream(new String[] { "Кредит", "Ипотека", "Вклад" }).forEach(productName -> {
 			Application application = new Application(contact, productName);
-			application.setApplicationId(new Long(applicationsMap.size() + 1));
+			application.setApplicationId((long) (applicationsList.size() + 1));
 			application.setDateCreated(currentDate);
-			applicationsMap.put(productName, application);
+			applicationsList.add(application);
 		});
-		contact.setApplications(new ArrayList<>(applicationsMap.values()));
 	}
 
 	@Test
 	public void testGetLastProductByContactId() {
 		Application last = applicationService.getLastProductByContactId(contact.getContactId());
-		assertEquals(applicationsMap.get("Вклад"), last);
+		assertEquals(((LinkedList<Application>) applicationsList).getLast(), last);
 	}
 
 }
