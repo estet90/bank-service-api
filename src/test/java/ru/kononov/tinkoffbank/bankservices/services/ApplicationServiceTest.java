@@ -2,7 +2,6 @@ package ru.kononov.tinkoffbank.bankservices.services;
 
 import static org.junit.Assert.*;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -49,7 +48,8 @@ public class ApplicationServiceTest {
 	@Before
 	public void setUp() throws Exception {
 		fillData();
-		Application last = contact.getApplications().stream().max(Comparator.comparing(Application::getDateCreated)).get();
+		Application last = contact.getApplications().stream()
+				.max(Comparator.comparing(Application::getDateCreated).thenComparing(Application::getApplicationId)).get();
 		Mockito.when(applicationRepository
 				.findTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc(contact.getContactId()))
 				.thenReturn(last);
@@ -62,8 +62,6 @@ public class ApplicationServiceTest {
 			Application application = new Application(contact, productName);
 			application.setApplicationId(new Long(applicationsMap.size() + 1));
 			application.setDateCreated(currentDate);
-			System.out.println(application);
-			System.out.println(new SimpleDateFormat("dd.MM.yyyy hh:mm:ss.SSS").format(application.getDateCreated()));
 			applicationsMap.put(productName, application);
 		});
 		contact.setApplications(new ArrayList<>(applicationsMap.values()));
