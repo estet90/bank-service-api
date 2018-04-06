@@ -3,6 +3,7 @@ package ru.kononov.tinkoffbank.bankservices.api.config;
 import java.util.Arrays;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.swagger.Swagger2Feature;
@@ -28,12 +29,33 @@ public class CxfRestConfig {
 
 	@Autowired
 	private Bus bus;
-	@Autowired
-	private ContactsController contactsController;
-	@Autowired
-	private RestResponseFilter restResponseFilter;
-	@Autowired
-	private InvalidDataAccessResourceUsageExceptionMapper invalidDataAccessResourceUsageExceptionMapper;
+
+	@Bean
+	public Bus bus(){
+		return new SpringBus();
+	}
+
+	@Bean
+	public ContactsController contactsController() {
+		return new ContactsController();
+	}
+
+	@Bean
+	public RestResponseFilter restResponseFilter() {
+		return new RestResponseFilter();
+	}
+
+	@Bean
+	public InvalidDataAccessResourceUsageExceptionMapper invalidDataAccessResourceUsageExceptionMapper() {
+		return new InvalidDataAccessResourceUsageExceptionMapper();
+	}
+
+//	@Autowired
+//	private ContactsController contactsController;
+//	@Autowired
+//	private RestResponseFilter restResponseFilter;
+//	@Autowired
+//	private InvalidDataAccessResourceUsageExceptionMapper invalidDataAccessResourceUsageExceptionMapper;
 
 	/**
 	 * 
@@ -44,9 +66,9 @@ public class CxfRestConfig {
 	@Bean
 	public Server rsServer() {
 		JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
-		endpoint.setProviders(Arrays.asList(new JacksonJaxbJsonProvider(), restResponseFilter, invalidDataAccessResourceUsageExceptionMapper));
+		endpoint.setProviders(Arrays.asList(new JacksonJaxbJsonProvider(), restResponseFilter(), invalidDataAccessResourceUsageExceptionMapper()));
 		endpoint.setBus(bus);
-		endpoint.setServiceBean(contactsController);
+		endpoint.setServiceBean(contactsController());
 		endpoint.setAddress("/api");
 		endpoint.setFeatures(Arrays.asList(new Swagger2Feature()));
 		return endpoint.create();

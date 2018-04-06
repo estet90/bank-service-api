@@ -40,17 +40,6 @@
 			<artifactId>cxf-rt-rs-service-description-swagger</artifactId>
 			<version>${apache-cxf.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-transports-http</artifactId>
-			<version>${apache-cxf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-transports-local</artifactId>
-			<version>${apache-cxf.version}</version>
-		</dependency>
-
 
 		<dependency>
 			<groupId>org.webjars</groupId>

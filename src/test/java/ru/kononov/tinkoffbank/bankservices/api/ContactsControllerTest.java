@@ -1,99 +1,55 @@
 package ru.kononov.tinkoffbank.bankservices.api;
 
-import static org.junit.Assert.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import lombok.extern.log4j.Log4j2;
-import org.apache.cxf.bus.spring.SpringBus;
-import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.cxf.jaxrs.swagger.Swagger2Feature;
-import org.apache.cxf.transport.local.LocalConduit;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.kononov.tinkoffbank.bankservices.api.providers.InvalidDataAccessResourceUsageExceptionMapper;
-import ru.kononov.tinkoffbank.bankservices.api.providers.RestResponseFilter;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.WebApplicationContext;
+import ru.kononov.tinkoffbank.bankservices.api.config.CxfRestConfig;
+import ru.kononov.tinkoffbank.bankservices.entities.Application;
 import ru.kononov.tinkoffbank.bankservices.services.ApplicationService;
 
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.util.Comparator;
 
-@Log4j2
 @RunWith(SpringRunner.class)
+@SpringBootTest(classes = CxfRestConfig.class)
 public class ContactsControllerTest {
 
+	private MockMvc mockMvc;
+
 	@Autowired
-	private static ContactsController contactsController;
-	@Autowired
-	private static RestResponseFilter restResponseFilter;
-	@Autowired
-	private static InvalidDataAccessResourceUsageExceptionMapper invalidDataAccessResourceUsageExceptionMapper;
+	private WebApplicationContext webApplicationContext;
 
-	private static List<Object> providers = new ArrayList<>();
+	@MockBean
+	private ApplicationService applicationService;
 
-	private static Server server;
-	private WebClient client;
-
-	@TestConfiguration
-	static class ApplicationServiceTestContextConfiguration {
-
-		@Bean
-		public ContactsController contactsController() {
-			return new ContactsController();
-		}
-
-	}
-
-	@BeforeClass
-	public static void setUpBeforeClass() {
-		JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
-		providers.addAll(Arrays.asList(new JacksonJaxbJsonProvider(), restResponseFilter, invalidDataAccessResourceUsageExceptionMapper));
-		endpoint.setProviders(providers);
-		endpoint.setBus(new SpringBus());
-		endpoint.setServiceBean(contactsController);
-		endpoint.setAddress("/api");
-		endpoint.setFeatures(Arrays.asList(new Swagger2Feature()));
-		server = endpoint.create();
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		server.stop();
-		server.destroy();
-	}
+	private Application application = new Application();
+	private Long correctApplicationId = 1L;
+	private Long incorrectApplicationId = 2L;
 
 	@Before
-	public void setUp() throws Exception {
-		client = WebClient.create("http://localhost:8080/bank-services/api", providers);
-		WebClient.getConfig(client).getRequestContext().put(LocalConduit.DIRECT_DISPATCH, Boolean.TRUE);
+	public void setUp() {
+		this.mockMvc = webAppContextSetup(webApplicationContext).build();
+
+		Mockito.when(applicationService.getLastProductByContactId(correctApplicationId)).thenReturn(application);
+		Mockito.when(applicationService.getLastProductByContactId(incorrectApplicationId)).thenReturn(null);
 	}
 
-	@After
-	public void tearDown() throws Exception {
-	}
-
-	@Test
-	public void testGetLastProductByContactId() {
-		client.accept(MediaType.APPLICATION_XML_TYPE);
-		client.path("/contacts/1/applications/last");
-		Response response = client.get(Response.class);
-		System.out.println(response.getEntity().toString());
-		assertEquals(true, true);
+		@Test
+	public void test() throws Exception {
+			mockMvc.perform(get("http://localhost:8080/bank-services/api/contacts/1/applications/last")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
 	}
 
 }
