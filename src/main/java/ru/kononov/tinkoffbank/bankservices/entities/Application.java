@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,10 +24,11 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "APPLICATION")
 public class Application {
-	
+
 	public Application(Contact contact, String productName) {
 		this.contact = contact;
 		this.productName = productName;
@@ -42,10 +44,10 @@ public class Application {
 	@JoinColumn(name = "CONTACT_ID")
 	private Contact contact;
 
-	@Column(name = "DT_CREATED")
-	private Date dateCreated;
-
 	@Column(name = "PRODUCT_NAME")
 	private String productName;
+	
+	@Column(name = "DT_CREATED")
+	private Date dateCreated;
 
 }

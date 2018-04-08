@@ -9,12 +9,12 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 /**
  * 
  * @author dkononov
- * конвертор для отображения даты в формате dd.MM.yyyy HH:mm:ss в XML/JSON
+ * конвертор для отображения даты в формате dd.MM.yyyy HH:mm:ss.SSS в XML/JSON
  *
  */
 public class DateTimeAdapter extends XmlAdapter<String, Date> {
 
-	private final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+	private final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
 
 	@Override
 	public Date unmarshal(String xml) throws Exception {
@@ -22,8 +22,8 @@ public class DateTimeAdapter extends XmlAdapter<String, Date> {
 	}
 
 	@Override
-	public String marshal(Date object) throws Exception {
-		return dateFormat.format(object);
+	public String marshal(Date date) throws Exception {
+		return dateFormat.format(date);
 	}
 
 }

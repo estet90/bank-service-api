@@ -4,9 +4,15 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.kononov.tinkoffbank.bankservices.entities.Application;
 import ru.kononov.tinkoffbank.bankservices.entities.Contact;
 import ru.kononov.tinkoffbank.bankservices.exceptions.BankServicesException;
@@ -23,10 +29,17 @@ import ru.kononov.tinkoffbank.bankservices.exceptions.BankServicesException;
  *
  */
 @NoArgsConstructor
+@Setter
 @XmlRootElement(name = "APPLICATION")
 public class ApplicationDto {
 
-	Application application;
+	private Long applicationId;
+
+	private Long contactId;
+
+	private String productName;
+
+	private Date dateCreated;
 
 	/**
 	 * 
@@ -41,28 +54,49 @@ public class ApplicationDto {
 		if (application.getContact() == null) {
 			throw new BankServicesException("К заявке не привязан контакт");
 		}
-		this.application = application;
+		this.applicationId = application.getApplicationId();
+		this.contactId = application.getContact().getContactId();
+		this.dateCreated = application.getDateCreated();
+		this.productName = application.getProductName();
 	}
 
 	@XmlElement(name = "APPLICATION_ID")
+	@JsonProperty("APPLICATION_ID")
 	public Long getApplicationId() {
-		return application.getApplicationId();
+		return this.applicationId;
 	}
 
 	@XmlElement(name = "CONTACT_ID")
+	@JsonProperty("CONTACT_ID")
 	public Long getContactId() {
-		return application.getContact().getContactId();
+		return this.contactId;
 	}
 
 	@XmlElement(name = "DT_CREATED")
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	@JsonProperty("DT_CREATED")
+	@JsonFormat(shape = Shape.STRING, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
 	public Date getDateCreated() {
-		return application.getDateCreated();
+		return this.dateCreated;
 	}
 
 	@XmlElement(name = "PRODUCT_NAME")
+	@JsonProperty("PRODUCT_NAME")
 	public String getProductName() {
-		return application.getProductName();
+		return this.productName;
+	}
+
+	@XmlTransient
+	public Application getApplication() throws BankServicesException {
+		if (this.applicationId == null) {
+			throw new BankServicesException("Получен пустой объект типа \"Заявка\"");
+		}
+		if (this.contactId == null) {
+			throw new BankServicesException("К заявке не привязан контакт");
+		}
+		Contact contact = new Contact(this.contactId);
+		Application application = new Application(this.applicationId, contact, this.productName, this.dateCreated);
+		return application;
 	}
 
 }

@@ -10,9 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * 
@@ -21,8 +20,7 @@ import lombok.Setter;
  * сущность контакт
  *
  */
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @Entity
 @Table(name = "CONTACT")

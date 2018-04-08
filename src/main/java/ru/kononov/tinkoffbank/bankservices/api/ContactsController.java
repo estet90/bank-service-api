@@ -30,7 +30,7 @@ import ru.kononov.tinkoffbank.bankservices.services.ApplicationService;
  */
 @Component
 @Path("/contacts")
-@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Produces({ MediaType.APPLICATION_JSON + "; charset=UTF-8", MediaType.APPLICATION_XML + "; charset=UTF-8"})
 @Api(value = "/contacts")
 public class ContactsController {
 

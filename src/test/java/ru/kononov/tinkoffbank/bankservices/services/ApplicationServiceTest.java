@@ -3,7 +3,6 @@ package ru.kononov.tinkoffbank.bankservices.services;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,8 +47,7 @@ public class ApplicationServiceTest {
 	@Before
 	public void setUp() throws Exception {
 		fillData();
-		Application last = applicationsList.stream()
-				.max(Comparator.comparing(Application::getDateCreated).thenComparing(Application::getApplicationId)).get();
+		Application last = ((LinkedList<Application>)applicationsList).getLast();
 		Mockito.when(applicationRepository
 				.findTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc(contact.getContactId()))
 				.thenReturn(last);

@@ -2,8 +2,9 @@ package ru.kononov.tinkoffbank.bankservices.repositories;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.junit.After;
@@ -30,7 +31,7 @@ public class ApplicationRepositoryTest {
 
 	private Contact contact = new Contact();
 
-	private List<Application> applicationsList = new LinkedList<>();
+	private List<Application> applicationsList = new ArrayList<>();
 
 	@Before
 	public void setUp() throws Exception {
@@ -53,7 +54,9 @@ public class ApplicationRepositoryTest {
 	public void testFindTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc() {
 		Application last = applicationRepository
 				.findTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc(contact.getContactId());
-		assertEquals(((LinkedList<Application>)applicationsList).getLast(), last);
+		Application lastinList = applicationsList.stream()
+				.max(Comparator.comparing(Application::getDateCreated).thenComparing(Application::getApplicationId)).get();
+		assertEquals(lastinList, last);
 	}
 
 }
