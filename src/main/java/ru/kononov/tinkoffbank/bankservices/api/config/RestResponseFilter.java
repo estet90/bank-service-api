@@ -1,4 +1,4 @@
-package ru.kononov.tinkoffbank.bankservices.api.providers;
+package ru.kononov.tinkoffbank.bankservices.api.config;
 
 import java.io.IOException;
 
@@ -18,10 +18,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 /**
- * 
- * @author dkononov
- * 
+ *
  * фильтр HTTP-запросов
+ *
+ * @author dkononov
+ *
  *
  */
 @Component
@@ -33,13 +34,16 @@ public class RestResponseFilter implements ContainerResponseFilter {
 	private String swaggerSuffix;
 
 	/**
-     * При ответе со статусом 404 формируется сообщение со ссылкой на документацию
-     *
-     *
-     * @param requestContext контекст запроса
-     * @param responseContext контекст ответа
-     * @throws IOException при ошибках ввода/вывода
-     */
+	 * При ответе со статусом 404 формируется сообщение со ссылкой на документацию
+	 *
+	 *
+	 * @param requestContext
+	 *            контекст запроса
+	 * @param responseContext
+	 *            контекст ответа
+	 * @throws IOException
+	 *             при ошибках ввода/вывода
+	 */
 	@Override
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
 			throws IOException {
@@ -53,8 +57,10 @@ public class RestResponseFilter implements ContainerResponseFilter {
 	/**
 	 * Формирование сообщения со ссылкой на документацию
 	 * 
-	 * @param message контекст запроса
-	 * @throws IOException при ошибках ввода/вывода
+	 * @param message
+	 *            контекст запроса
+	 * @throws IOException
+	 *             при ошибках ввода/вывода
 	 */
 	private void sendError(Message message) throws IOException {
 		// получаемое из контекста значение http://host:port

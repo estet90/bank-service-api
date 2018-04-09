@@ -19,13 +19,12 @@ import ru.kononov.tinkoffbank.bankservices.exceptions.BankServicesException;
 
 /**
  * 
- * @author dkononov
- * 
  * класс-обёртка для {@link Application}
  * <p>
  * используется для отображения данных в форматах JSON/XML
  * добавлено отображение поля {@link Contact#getContactId()}
  * 
+ * @author dkononov
  *
  */
 @NoArgsConstructor
@@ -49,10 +48,10 @@ public class ApplicationDto {
 	 */
 	public ApplicationDto(Application application) throws BankServicesException {
 		if (application == null) {
-			throw new BankServicesException("Передан пустой объект типа \"Заявка\"");
+			throw new BankServicesException(BankServicesException.MESSAGE_TRANSMITTED_EMPTY_APPLICATION);
 		}
 		if (application.getContact() == null) {
-			throw new BankServicesException("К заявке не привязан контакт");
+			throw new BankServicesException(BankServicesException.MESSAGE_CONTACT_IS_NOT_TIED);
 		}
 		this.applicationId = application.getApplicationId();
 		this.contactId = application.getContact().getContactId();
@@ -86,13 +85,19 @@ public class ApplicationDto {
 		return this.productName;
 	}
 
+	/**
+	 * получение объекта типа {@link Application}
+	 * 
+	 * @return заявка
+	 * @throws BankServicesException если идентификатор заявки или контакта пустой
+	 */
 	@XmlTransient
 	public Application getApplication() throws BankServicesException {
 		if (this.applicationId == null) {
-			throw new BankServicesException("Получен пустой объект типа \"Заявка\"");
+			throw new BankServicesException(BankServicesException.MESSAGE_RECEIVED_EMPTY_APPLICATION);
 		}
 		if (this.contactId == null) {
-			throw new BankServicesException("К заявке не привязан контакт");
+			throw new BankServicesException(BankServicesException.MESSAGE_CONTACT_IS_NOT_TIED);
 		}
 		Contact contact = new Contact(this.contactId);
 		Application application = new Application(this.applicationId, contact, this.productName, this.dateCreated);

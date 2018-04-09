@@ -23,9 +23,9 @@ import ru.kononov.tinkoffbank.bankservices.services.ApplicationService;
 
 /**
  * 
- * @author dkononov
- *
  * REST API для получения данных по контактам и их заявкам
+ * 
+ * @author dkononov
  *
  */
 @Component

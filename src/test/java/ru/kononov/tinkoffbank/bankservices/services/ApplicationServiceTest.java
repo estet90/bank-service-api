@@ -21,6 +21,13 @@ import ru.kononov.tinkoffbank.bankservices.entities.Application;
 import ru.kononov.tinkoffbank.bankservices.entities.Contact;
 import ru.kononov.tinkoffbank.bankservices.repositories.ApplicationRepository;
 
+/**
+ * 
+ * тест для {@link ApplicationService}
+ * 
+ * @author dkononov
+ *
+ */
 @RunWith(SpringRunner.class)
 public class ApplicationServiceTest {
 
@@ -45,7 +52,7 @@ public class ApplicationServiceTest {
 	}
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		fillData();
 		Application last = ((LinkedList<Application>)applicationsList).getLast();
 		Mockito.when(applicationRepository

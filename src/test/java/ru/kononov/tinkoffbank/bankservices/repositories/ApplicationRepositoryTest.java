@@ -19,6 +19,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.kononov.tinkoffbank.bankservices.entities.Application;
 import ru.kononov.tinkoffbank.bankservices.entities.Contact;
 
+/**
+ * 
+ * интеграционный тест для {@link ApplicationRepository}
+ * 
+ * @author dkononov
+ *
+ */
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class ApplicationRepositoryTest {
@@ -34,7 +41,7 @@ public class ApplicationRepositoryTest {
 	private List<Application> applicationsList = new ArrayList<>();
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		contact = entityManager.persist(contact);
 		Arrays.stream(new String[] { "Кредит", "Ипотека", "Вклад" }).forEach(productName -> {
 			Application application = entityManager.persist(new Application(contact, productName));
@@ -43,7 +50,7 @@ public class ApplicationRepositoryTest {
 	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void tearDown() {
 		applicationsList.stream().forEach(application -> {
 			entityManager.remove(application);
 		});

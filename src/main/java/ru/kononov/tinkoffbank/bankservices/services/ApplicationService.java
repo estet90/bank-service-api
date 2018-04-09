@@ -7,11 +7,11 @@ import ru.kononov.tinkoffbank.bankservices.entities.Application;
 import ru.kononov.tinkoffbank.bankservices.repositories.ApplicationRepository;
 
 /**
+ *
+ * обвязка над {@link ApplicationRepository}
  * 
  * @author dkononov
  * 
- * обвязка над {@link ApplicationRepository}
- *
  */
 @Service
 public class ApplicationService {

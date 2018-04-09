@@ -38,6 +38,13 @@ import ru.kononov.tinkoffbank.bankservices.entities.Contact;
 import ru.kononov.tinkoffbank.bankservices.exceptions.BankServicesException;
 import ru.kononov.tinkoffbank.bankservices.services.ApplicationService;
 
+/**
+ * 
+ * тесты для REST API
+ * 
+ * @author dkononov
+ *
+ */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { BankServicesApplication.class })
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -92,6 +99,7 @@ public class ContactsControllerTest {
 			throws JsonParseException, JsonMappingException, IOException, BankServicesException {
 		String responseString = response.asString();
 		ObjectMapper mapper = new ObjectMapper();
+		// если не выставить явно параметр timeZone, десериализация проходит неправильно
 		mapper.setTimeZone(TimeZone.getDefault());
 		ApplicationDto applicationDto = mapper.readValue(responseString, ApplicationDto.class);
 		Application application = applicationDto.getApplication();

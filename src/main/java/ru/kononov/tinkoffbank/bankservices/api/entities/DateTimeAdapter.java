@@ -8,8 +8,9 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * 
- * @author dkononov
  * конвертор для отображения даты в формате dd.MM.yyyy HH:mm:ss.SSS в XML/JSON
+ * 
+ * @author dkononov
  *
  */
 public class DateTimeAdapter extends XmlAdapter<String, Date> {

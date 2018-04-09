@@ -14,10 +14,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ *
+ * сущность контакт
  * 
  * @author dkononov
- * 
- * сущность контакт
  *
  */
 @Data

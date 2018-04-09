@@ -1,11 +1,13 @@
 # конфигурационный файл с настройками для Spring Boot, которые подтягиваются автоматически
 
-cxf.path: /bank-services
+cxf:
+  path: /bank-services/api
+  jaxrs:
+    component-scan: true
 
 spring:
   jpa.hibernate.ddl-auto: none
   jpa.properties.hibernate:
     show_sql: true
     format_sql: true
-  datasource:
-    platform: h2
+  datasource.platform: h2

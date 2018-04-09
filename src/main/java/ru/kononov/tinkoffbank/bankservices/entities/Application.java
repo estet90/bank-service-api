@@ -16,11 +16,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ *
+ * сущность заявка
  * 
  * @author dkononov
  * 
- * сущность заявка
- *
  */
 @Data
 @NoArgsConstructor
@@ -46,7 +46,7 @@ public class Application {
 
 	@Column(name = "PRODUCT_NAME")
 	private String productName;
-	
+
 	@Column(name = "DT_CREATED")
 	private Date dateCreated;
 

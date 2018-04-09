@@ -6,11 +6,11 @@ import org.springframework.stereotype.Repository;
 import ru.kononov.tinkoffbank.bankservices.entities.Application;
 
 /**
+ *
+ * репозиторий для работы с сущностью заявка
  * 
  * @author dkononov
  * 
- * репозиторий для работы с сущностью заявка
- *
  */
 @Repository
 public interface ApplicationRepository extends PagingAndSortingRepository<Application, Long> {
