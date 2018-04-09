@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Properties>
+		<Property name="LOG_PATTERN">
+			%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+		</Property>
+	</Properties>
+	<Appenders>
+		<Console name="ConsoleAppender" target="SYSTEM_OUT">
+			<PatternLayout>
+				<Pattern>${LOG_PATTERN}</Pattern>
+			</PatternLayout>
+		</Console>
+		<RollingFile name="FileAppender"
+			fileName="logs/bank-services.log"
+			filePattern="logs/bank-services-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<Pattern>${LOG_PATTERN}</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" />
+				<SizeBasedTriggeringPolicy size="10MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10" />
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Root level="INFO">
+			<AppenderRef ref="FileAppender" />
+			<AppenderRef ref="ConsoleAppender" />
+		</Root>
+		<Logger name="ru.kononov.tinkoffbank.bankservices"
+			level="DEBUG" />
+	</Loggers>
+</Configuration>
