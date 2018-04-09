@@ -1,5 +1,5 @@
 # Сборка приложения
-<>`mvn package` - сборка с прогоном тестов
+`mvn package` - сборка с прогоном тестов
 
 `mvn package -Dmaven.test.skip=true` - сборка без прогона тестов
 
