@@ -10,9 +10,9 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 /**
  *
- * @author dkononov
- *
  * подключение {@link JacksonJaxbJsonProvider}
+ *
+ * @author dkononov
  *
  */
 @Provider

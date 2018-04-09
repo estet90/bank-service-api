@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Configuration;
 
 /**
 *
-* @author dkononov
-*
 * подключение {@link Swagger2Feature}
+*
+* @author dkononov
 *
 */
 @Configuration

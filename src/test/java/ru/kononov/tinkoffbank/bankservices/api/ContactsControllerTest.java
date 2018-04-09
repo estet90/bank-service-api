@@ -84,7 +84,7 @@ public class ContactsControllerTest {
 	@Test
 	public void testOkJsonGetLastProductByContactId() {
 		Response response = getResponse(correctPath(), CONTENT_TYPE_JSON);
-		response.then().statusCode(HttpStatus.SC_OK).contentType(CONTENT_TYPE_JSON);
+		checkJsonResponse(response, HttpStatus.SC_OK);
 
 		Application application = null;
 		try {
@@ -109,7 +109,7 @@ public class ContactsControllerTest {
 	@Test
 	public void testOkXmlGetLastProductByContactId() throws JAXBException, BankServicesException {
 		Response response = getResponse(correctPath(), CONTENT_TYPE_XML);
-		response.then().statusCode(HttpStatus.SC_OK).contentType(CONTENT_TYPE_XML);
+		checkXmlResponse(response, HttpStatus.SC_OK);
 
 		Application application = null;
 		try {
@@ -133,13 +133,13 @@ public class ContactsControllerTest {
 	@Test
 	public void testNotFoundJsonGetLastProductByContactId() {
 		Response response = getResponse(incorrectPath(), CONTENT_TYPE_JSON);
-		response.then().statusCode(HttpStatus.SC_NOT_FOUND).contentType(CONTENT_TYPE_JSON);
+		checkJsonResponse(response, HttpStatus.SC_NOT_FOUND);
 	}
 	
 	@Test
 	public void testNotFoundXmlGetLastProductByContactId() {
 		Response response = getResponse(incorrectPath(), CONTENT_TYPE_XML);
-		response.then().statusCode(HttpStatus.SC_NOT_FOUND).contentType(CONTENT_TYPE_XML);
+		checkXmlResponse(response, HttpStatus.SC_NOT_FOUND);
 	}
 
 	private String pathWithContactId(Long contactId) {
@@ -158,6 +158,18 @@ public class ContactsControllerTest {
 	private Response getResponse(String path, String contentType) {
 		Response response = RestAssured.given().when().accept(contentType).get(path);
 		return response;
+	}
+
+	private void checkResponse(Response response, int status, String contantType) {
+		response.then().statusCode(status).contentType(contantType);
+	}
+
+	private void checkJsonResponse(Response response, int status) {
+		checkResponse(response, status, CONTENT_TYPE_JSON);
+	}
+
+	private void checkXmlResponse(Response response, int status) {
+		checkResponse(response, status, CONTENT_TYPE_XML);
 	}
 
 }
