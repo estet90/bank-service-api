@@ -1,6 +1,7 @@
 package ru.kononov.tinkoffbank.bankservices.api.entities;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -18,12 +19,12 @@ public class DateTimeAdapter extends XmlAdapter<String, Date> {
 	private final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
 
 	@Override
-	public Date unmarshal(String xml) throws Exception {
+	public Date unmarshal(String xml) throws ParseException {
 		return dateFormat.parse(xml);
 	}
 
 	@Override
-	public String marshal(Date date) throws Exception {
+	public String marshal(Date date) {
 		return dateFormat.format(date);
 	}
 
