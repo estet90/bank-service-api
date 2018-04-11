@@ -23,8 +23,6 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.restassured.RestAssured;
@@ -96,7 +94,7 @@ public class ContactsControllerTest {
 	}
 
 	private Application applicationFromJsonResponse(Response response)
-			throws JsonParseException, JsonMappingException, IOException, BankServicesException {
+			throws IOException, BankServicesException {
 		String responseString = response.asString();
 		ObjectMapper mapper = new ObjectMapper();
 		// если не выставить явно параметр timeZone, десериализация проходит неправильно
@@ -107,7 +105,7 @@ public class ContactsControllerTest {
 	}
 
 	@Test
-	public void testOkXmlGetLastProductByContactId() throws JAXBException, BankServicesException {
+	public void testOkXmlGetLastProductByContactId() {
 		Response response = getResponse(correctPath(), CONTENT_TYPE_XML);
 		checkXmlResponse(response, HttpStatus.SC_OK);
 
@@ -160,8 +158,8 @@ public class ContactsControllerTest {
 		return response;
 	}
 
-	private void checkResponse(Response response, int status, String contantType) {
-		response.then().statusCode(status).contentType(contantType);
+	private void checkResponse(Response response, int status, String contentType) {
+		response.then().statusCode(status).contentType(contentType);
 	}
 
 	private void checkJsonResponse(Response response, int status) {
