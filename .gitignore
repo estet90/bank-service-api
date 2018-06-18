@@ -5,3 +5,5 @@ logs
 .classpath
 .idea
 *.iml
+*.ipr
+*.iws
