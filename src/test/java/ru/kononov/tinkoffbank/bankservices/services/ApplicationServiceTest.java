@@ -1,24 +1,19 @@
 package ru.kononov.tinkoffbank.bankservices.services;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.kononov.tinkoffbank.bankservices.entities.Application;
 import ru.kononov.tinkoffbank.bankservices.entities.Contact;
 import ru.kononov.tinkoffbank.bankservices.repositories.ApplicationRepository;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 /**
  * тест для {@link ApplicationService}
@@ -26,6 +21,9 @@ import static org.junit.Assert.assertEquals;
  * @author dkononov
  */
 @RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {
+        ApplicationService.class
+})
 public class ApplicationServiceTest {
 
     @MockBean
@@ -34,43 +32,33 @@ public class ApplicationServiceTest {
     @Autowired
     private ApplicationService applicationService;
 
-    private Contact contact = new Contact(1L);
-
-    private List<Application> applicationsList = new LinkedList<>();
-
-    @TestConfiguration
-    static class ApplicationServiceTestContextConfiguration {
-
-        @Bean
-        public ApplicationService applicationService() {
-            return new ApplicationService();
-        }
-
-    }
-
-    @Before
-    public void setUp() {
-        fillData();
-        Application last = ((LinkedList<Application>) applicationsList).getLast();
-        Mockito.when(applicationRepository
-                .findTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc(contact.getContactId()))
-                .thenReturn(last);
-    }
-
-    private void fillData() {
-        Date currentDate = new Date();
-        Arrays.stream(new String[]{"Кредит", "Ипотека", "Вклад"}).forEach(productName -> {
-            Application application = new Application(contact, productName);
-            application.setApplicationId((long) (applicationsList.size() + 1));
-            application.setDateCreated(currentDate);
-            applicationsList.add(application);
-        });
-    }
-
     @Test
     public void testGetLastProductByContactId() {
-        Application last = applicationService.getLastProductByContactId(contact.getContactId());
-        assertEquals(((LinkedList<Application>) applicationsList).getLast(), last);
+        Contact contact = new Contact(1L);
+        Application application = givenApplication(contact);
+        when(applicationRepository
+                .findTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc(contact.getContactId()))
+                .thenReturn(application);
+
+        Application whenApplication = applicationService.getLastProductByContactId(contact.getContactId());
+
+        thenApplication(application, whenApplication);
+    }
+
+    private Application givenApplication(Contact contact) {
+        Application application = new Application();
+        application.setApplicationId(1L);
+        application.setDateCreated(new Date());
+        application.setContact(contact);
+        application.setProductName("кредит");
+        return application;
+    }
+
+    private void thenApplication(Application application, Application whenApplication) {
+        assertEquals(application.getApplicationId(), whenApplication.getApplicationId());
+        assertEquals(application.getDateCreated(), whenApplication.getDateCreated());
+        assertEquals(application.getProductName(), whenApplication.getProductName());
+        assertEquals(application.getContact().getContactId(), whenApplication.getContact().getContactId());
     }
 
 }

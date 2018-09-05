@@ -15,7 +15,7 @@ public interface ApplicationRepository extends PagingAndSortingRepository<Applic
     /**
      * получение последней заявки по идентификатору контакта
      *
-     * @param contactId
+     * @param contactId идентификатор контакта
      * @return заявка
      */
     Application findTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc(Long contactId);

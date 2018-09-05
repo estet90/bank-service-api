@@ -1,8 +1,8 @@
 package ru.kononov.tinkoffbank.bankservices.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.kononov.tinkoffbank.bankservices.entities.Application;
@@ -14,6 +14,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
+
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
+import static java.util.Objects.isNull;
+import static ru.kononov.tinkoffbank.bankservices.exceptions.BankServicesException.*;
 
 /**
  * класс-обёртка для {@link Application}
@@ -28,12 +32,27 @@ import java.util.Date;
 @XmlRootElement(name = "APPLICATION")
 public class ApplicationDto {
 
+    @Getter(onMethod_ = {
+            @XmlElement(name = "APPLICATION_ID"),
+            @JsonProperty("APPLICATION_ID")
+    })
     private Long applicationId;
-
+    @Getter(onMethod_ = {
+            @XmlElement(name = "CONTACT_ID"),
+            @JsonProperty("CONTACT_ID")
+    })
     private Long contactId;
-
+    @Getter(onMethod_ = {
+            @XmlElement(name = "PRODUCT_NAME"),
+            @JsonProperty("PRODUCT_NAME")
+    })
     private String productName;
-
+    @Getter(onMethod_ = {
+            @XmlElement(name = "DT_CREATED"),
+            @JsonProperty("DT_CREATED"),
+            @XmlJavaTypeAdapter(DateTimeAdapter.class),
+            @JsonFormat(shape = STRING, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
+    })
     private Date dateCreated;
 
     /**
@@ -41,42 +60,16 @@ public class ApplicationDto {
      * @throws BankServicesException если в конструктор передан null или заявка не содержит контакт
      */
     public ApplicationDto(Application application) throws BankServicesException {
-        if (application == null) {
-            throw new BankServicesException(BankServicesException.MESSAGE_TRANSMITTED_EMPTY_APPLICATION);
+        if (isNull(application)) {
+            throw new BankServicesException(MESSAGE_TRANSMITTED_EMPTY_APPLICATION);
         }
-        if (application.getContact() == null) {
-            throw new BankServicesException(BankServicesException.MESSAGE_CONTACT_IS_NOT_TIED);
+        if (isNull(application.getContact())) {
+            throw new BankServicesException(MESSAGE_CONTACT_IS_NOT_TIED);
         }
         this.applicationId = application.getApplicationId();
         this.contactId = application.getContact().getContactId();
         this.dateCreated = application.getDateCreated();
         this.productName = application.getProductName();
-    }
-
-    @XmlElement(name = "APPLICATION_ID")
-    @JsonProperty("APPLICATION_ID")
-    public Long getApplicationId() {
-        return this.applicationId;
-    }
-
-    @XmlElement(name = "CONTACT_ID")
-    @JsonProperty("CONTACT_ID")
-    public Long getContactId() {
-        return this.contactId;
-    }
-
-    @XmlElement(name = "DT_CREATED")
-    @XmlJavaTypeAdapter(DateTimeAdapter.class)
-    @JsonProperty("DT_CREATED")
-    @JsonFormat(shape = Shape.STRING, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
-    public Date getDateCreated() {
-        return this.dateCreated;
-    }
-
-    @XmlElement(name = "PRODUCT_NAME")
-    @JsonProperty("PRODUCT_NAME")
-    public String getProductName() {
-        return this.productName;
     }
 
     /**
@@ -87,15 +80,14 @@ public class ApplicationDto {
      */
     @XmlTransient
     public Application getApplication() throws BankServicesException {
-        if (this.applicationId == null) {
-            throw new BankServicesException(BankServicesException.MESSAGE_RECEIVED_EMPTY_APPLICATION);
+        if (isNull(this.applicationId)) {
+            throw new BankServicesException(MESSAGE_RECEIVED_EMPTY_APPLICATION);
         }
-        if (this.contactId == null) {
-            throw new BankServicesException(BankServicesException.MESSAGE_CONTACT_IS_NOT_TIED);
+        if (isNull(this.contactId)) {
+            throw new BankServicesException(MESSAGE_CONTACT_IS_NOT_TIED);
         }
         Contact contact = new Contact(this.contactId);
-        Application application = new Application(this.applicationId, contact, this.productName, this.dateCreated);
-        return application;
+        return new Application(this.applicationId, contact, this.productName, this.dateCreated);
     }
 
 }

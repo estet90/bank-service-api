@@ -1,14 +1,15 @@
 package ru.kononov.tinkoffbank.bankservices.api.config;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.cxf.jaxrs.utils.JAXRSUtils;
-import org.apache.cxf.message.Message;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+
+import static org.apache.cxf.jaxrs.utils.JAXRSUtils.convertFaultToResponse;
+import static org.apache.cxf.jaxrs.utils.JAXRSUtils.getCurrentMessage;
 
 /**
  * обработчик исключения {@link InvalidDataAccessResourceUsageException}
@@ -36,9 +37,7 @@ public class InvalidDataAccessResourceUsageExceptionMapper implements ExceptionM
     @Override
     public Response toResponse(InvalidDataAccessResourceUsageException exception) {
         log.error(exception);
-        Message message = JAXRSUtils.getCurrentMessage();
-        Response response = JAXRSUtils.convertFaultToResponse(exception.getCause(), message);
-        return response;
+        return convertFaultToResponse(exception.getCause(), getCurrentMessage());
     }
 
 }

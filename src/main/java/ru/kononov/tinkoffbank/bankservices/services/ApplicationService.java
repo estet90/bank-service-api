@@ -1,6 +1,6 @@
 package ru.kononov.tinkoffbank.bankservices.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.kononov.tinkoffbank.bankservices.entities.Application;
 import ru.kononov.tinkoffbank.bankservices.repositories.ApplicationRepository;
@@ -11,15 +11,15 @@ import ru.kononov.tinkoffbank.bankservices.repositories.ApplicationRepository;
  * @author dkononov
  */
 @Service
+@RequiredArgsConstructor
 public class ApplicationService {
 
-    @Autowired
-    private ApplicationRepository applicationRepository;
+    private final ApplicationRepository applicationRepository;
 
     /**
      * получение последней заявки по идентификатору контакта
      *
-     * @param contactId
+     * @param contactId идентификатор контакта
      * @return заявка
      */
     public Application getLastProductByContactId(Long contactId) {

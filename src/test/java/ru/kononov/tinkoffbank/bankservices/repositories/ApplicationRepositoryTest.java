@@ -12,10 +12,11 @@ import ru.kononov.tinkoffbank.bankservices.entities.Application;
 import ru.kononov.tinkoffbank.bankservices.entities.Contact;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -40,27 +41,27 @@ public class ApplicationRepositoryTest {
     @Before
     public void setUp() {
         contact = entityManager.persist(contact);
-        Arrays.stream(new String[]{"Кредит", "Ипотека", "Вклад"}).forEach(productName -> {
-            Application application = entityManager.persist(new Application(contact, productName));
-            applicationsList.add(application);
-        });
+        applicationsList = Stream.of("Кредит", "Ипотека", "Вклад")
+                .map(productName -> entityManager.persist(new Application(contact, productName)))
+                .collect(toList());
     }
 
     @After
     public void tearDown() {
-        applicationsList.stream().forEach(application -> {
-            entityManager.remove(application);
-        });
+        applicationsList.forEach(application -> entityManager.remove(application));
         entityManager.remove(contact);
     }
 
     @Test
     public void testFindTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc() {
-        Application last = applicationRepository
-                .findTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc(contact.getContactId());
-        Application lastinList = applicationsList.stream()
-                .max(Comparator.comparing(Application::getDateCreated).thenComparing(Application::getApplicationId)).get();
-        assertEquals(lastinList, last);
+        Application lastInList = applicationsList.stream()
+                .max(comparing(Application::getDateCreated)
+                        .thenComparing(Application::getApplicationId))
+                .orElse(null);
+
+        Application last = applicationRepository.findTopByContactContactIdOrderByDateCreatedDescApplicationIdDesc(contact.getContactId());
+
+        assertEquals(lastInList, last);
     }
 
 }

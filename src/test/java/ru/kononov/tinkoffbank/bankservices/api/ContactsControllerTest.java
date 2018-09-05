@@ -2,16 +2,11 @@ package ru.kononov.tinkoffbank.bankservices.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import lombok.extern.log4j.Log4j2;
-import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,15 +18,22 @@ import ru.kononov.tinkoffbank.bankservices.entities.Contact;
 import ru.kononov.tinkoffbank.bankservices.exceptions.BankServicesException;
 import ru.kononov.tinkoffbank.bankservices.services.ApplicationService;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
-import java.util.TimeZone;
 
+import static io.restassured.RestAssured.given;
+import static io.restassured.http.ContentType.JSON;
+import static io.restassured.http.ContentType.XML;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.TimeZone.getDefault;
+import static javax.xml.bind.JAXBContext.newInstance;
+import static org.apache.http.HttpStatus.SC_NOT_FOUND;
+import static org.apache.http.HttpStatus.SC_OK;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 /**
  * тесты для REST API
@@ -40,8 +42,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {BankServicesApplication.class})
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@Log4j2
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 public class ContactsControllerTest {
 
     @LocalServerPort
@@ -59,9 +60,6 @@ public class ContactsControllerTest {
     private static final long CORRECT_CONTACT_ID = 1L;
     private static final long INCORRECT_CONTACT_ID = 2L;
 
-    private static final String CONTENT_TYPE_JSON = ContentType.JSON.withCharset(StandardCharsets.UTF_8);
-    private static final String CONTENT_TYPE_XML = ContentType.XML.withCharset(StandardCharsets.UTF_8);
-
     @Before
     public void setup() {
         RestAssured.port = this.port;
@@ -70,21 +68,17 @@ public class ContactsControllerTest {
         application = new Application(contact, PRODUCT_NAME);
         application.setApplicationId(APPLICATION_ID);
 
-        Mockito.when(applicationService.getLastProductByContactId(CORRECT_CONTACT_ID)).thenReturn(application);
-        Mockito.when(applicationService.getLastProductByContactId(INCORRECT_CONTACT_ID)).thenReturn(null);
+        when(applicationService.getLastProductByContactId(CORRECT_CONTACT_ID)).thenReturn(application);
+        when(applicationService.getLastProductByContactId(INCORRECT_CONTACT_ID)).thenReturn(null);
     }
 
     @Test
-    public void testOkJsonGetLastProductByContactId() {
-        Response response = getResponse(correctPath(), CONTENT_TYPE_JSON);
-        checkJsonResponse(response, HttpStatus.SC_OK);
+    public void testOkJsonGetLastProductByContactId() throws IOException, BankServicesException {
+        Response response = getResponse(correctPath(), JSON.withCharset(UTF_8));
 
-        Application application = null;
-        try {
-            application = applicationFromJsonResponse(response);
-        } catch (IOException | BankServicesException e) {
-            log.error(e);
-        }
+        Application application = applicationFromJsonResponse(response);
+
+        checkJsonResponse(response, SC_OK);
         assertEquals(this.application, application);
     }
 
@@ -93,51 +87,44 @@ public class ContactsControllerTest {
         String responseString = response.asString();
         ObjectMapper mapper = new ObjectMapper();
         // если не выставить явно параметр timeZone, десериализация проходит неправильно
-        mapper.setTimeZone(TimeZone.getDefault());
+        mapper.setTimeZone(getDefault());
         ApplicationDto applicationDto = mapper.readValue(responseString, ApplicationDto.class);
-        Application application = applicationDto.getApplication();
-        return application;
+        return applicationDto.getApplication();
     }
 
     @Test
-    public void testOkXmlGetLastProductByContactId() {
-        Response response = getResponse(correctPath(), CONTENT_TYPE_XML);
-        checkXmlResponse(response, HttpStatus.SC_OK);
+    public void testOkXmlGetLastProductByContactId() throws JAXBException, BankServicesException {
+        Response response = getResponse(correctPath(), XML.withCharset(UTF_8));
 
-        Application application = null;
-        try {
-            application = applicationFromXmlResponse(response);
-        } catch (JAXBException | BankServicesException e) {
-            log.error(e);
-        }
+        Application application = applicationFromXmlResponse(response);
+
+        checkXmlResponse(response, SC_OK);
         assertEquals(this.application, application);
     }
 
     private Application applicationFromXmlResponse(Response response) throws JAXBException, BankServicesException {
-        JAXBContext jc = JAXBContext.newInstance(ApplicationDto.class);
-        Unmarshaller unmarshaller = jc.createUnmarshaller();
-        String responseString = response.asString();
-        StringReader reader = new StringReader(responseString);
+        Unmarshaller unmarshaller = newInstance(ApplicationDto.class).createUnmarshaller();
+        StringReader reader = new StringReader(response.asString());
         ApplicationDto applicationDto = (ApplicationDto) unmarshaller.unmarshal(reader);
-        Application application = applicationDto.getApplication();
-        return application;
+        return applicationDto.getApplication();
     }
 
     @Test
     public void testNotFoundJsonGetLastProductByContactId() {
-        Response response = getResponse(incorrectPath(), CONTENT_TYPE_JSON);
-        checkJsonResponse(response, HttpStatus.SC_NOT_FOUND);
+        Response response = getResponse(incorrectPath(), JSON.withCharset(UTF_8));
+
+        checkJsonResponse(response, SC_NOT_FOUND);
     }
 
     @Test
     public void testNotFoundXmlGetLastProductByContactId() {
-        Response response = getResponse(incorrectPath(), CONTENT_TYPE_XML);
-        checkXmlResponse(response, HttpStatus.SC_NOT_FOUND);
+        Response response = getResponse(incorrectPath(), XML.withCharset(UTF_8));
+
+        checkXmlResponse(response, SC_NOT_FOUND);
     }
 
     private String pathWithContactId(Long contactId) {
-        return new StringBuilder("/bank-services/api/contacts/").append(contactId).append("/applications/last")
-                .toString();
+        return "/bank-services/api/contacts/" + contactId + "/applications/last";
     }
 
     private String correctPath() {
@@ -149,8 +136,7 @@ public class ContactsControllerTest {
     }
 
     private Response getResponse(String path, String contentType) {
-        Response response = RestAssured.given().when().accept(contentType).get(path);
-        return response;
+        return given().when().accept(contentType).get(path);
     }
 
     private void checkResponse(Response response, int status, String contentType) {
@@ -158,11 +144,11 @@ public class ContactsControllerTest {
     }
 
     private void checkJsonResponse(Response response, int status) {
-        checkResponse(response, status, CONTENT_TYPE_JSON);
+        checkResponse(response, status, JSON.withCharset(UTF_8));
     }
 
     private void checkXmlResponse(Response response, int status) {
-        checkResponse(response, status, CONTENT_TYPE_XML);
+        checkResponse(response, status, XML.withCharset(UTF_8));
     }
 
 }

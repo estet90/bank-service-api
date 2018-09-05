@@ -1,7 +1,5 @@
 package ru.kononov.tinkoffbank.bankservices.api.entities;
 
-import lombok.extern.log4j.Log4j2;
-import org.junit.Before;
 import org.junit.Test;
 import ru.kononov.tinkoffbank.bankservices.entities.Application;
 import ru.kononov.tinkoffbank.bankservices.entities.Contact;
@@ -12,31 +10,25 @@ import java.util.Date;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static ru.kononov.tinkoffbank.bankservices.exceptions.BankServicesException.MESSAGE_CONTACT_IS_NOT_TIED;
+import static ru.kononov.tinkoffbank.bankservices.exceptions.BankServicesException.MESSAGE_RECEIVED_EMPTY_APPLICATION;
+import static ru.kononov.tinkoffbank.bankservices.exceptions.BankServicesException.MESSAGE_TRANSMITTED_EMPTY_APPLICATION;
 
 /**
  * тесты выполнения преобразований {@link Application} <-> {@link ApplicationDto}
  *
  * @author dkononov
  */
-@Log4j2
 public class ApplicationDtoTest {
 
-    private Application application;
-
-    @Before
-    public void setUp() {
-        Contact contact = new Contact(1L);
-        application = new Application(1L, contact, "Кредит", new Date());
-    }
-
     @Test
-    public void testGetApplication() {
-        try {
-            ApplicationDto applicationDto = new ApplicationDto(application);
-            assertEquals(application, applicationDto.getApplication());
-        } catch (BankServicesException e) {
-            log.error(e);
-        }
+    public void testGetApplication() throws BankServicesException {
+        Contact contact = new Contact(1L);
+        Application application = new Application(1L, contact, "Кредит", new Date());
+
+        ApplicationDto applicationDto = new ApplicationDto(application);
+
+        assertEquals(application, applicationDto.getApplication());
     }
 
     @Test
@@ -44,7 +36,7 @@ public class ApplicationDtoTest {
         try {
             new ApplicationDto(null);
         } catch (BankServicesException e) {
-            assertThat(e.getMessage(), is(BankServicesException.MESSAGE_TRANSMITTED_EMPTY_APPLICATION));
+            assertThat(e.getMessage(), is(MESSAGE_TRANSMITTED_EMPTY_APPLICATION));
         }
     }
 
@@ -53,9 +45,10 @@ public class ApplicationDtoTest {
         try {
             Application application = new Application();
             application.setApplicationId(1L);
+
             new ApplicationDto(application);
         } catch (BankServicesException e) {
-            assertThat(e.getMessage(), is(BankServicesException.MESSAGE_CONTACT_IS_NOT_TIED));
+            assertThat(e.getMessage(), is(MESSAGE_CONTACT_IS_NOT_TIED));
         }
     }
 
@@ -64,7 +57,7 @@ public class ApplicationDtoTest {
         try {
             new ApplicationDto().getApplication();
         } catch (BankServicesException e) {
-            assertThat(e.getMessage(), is(BankServicesException.MESSAGE_RECEIVED_EMPTY_APPLICATION));
+            assertThat(e.getMessage(), is(MESSAGE_RECEIVED_EMPTY_APPLICATION));
         }
     }
 }

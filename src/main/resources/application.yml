@@ -14,3 +14,5 @@ spring:
   datasource.platform: h2
   flyway:
     baseline-on-migrate: true
+
+swagger.suffix: services

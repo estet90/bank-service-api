@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.List;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 /**
  * сущность контакт
  *
@@ -22,7 +24,7 @@ public class Contact {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "CONTACT_ID")
     private Long contactId;
 

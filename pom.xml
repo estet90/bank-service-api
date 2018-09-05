@@ -5,19 +5,19 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.kononov.tinkoffbank</groupId>
     <artifactId>bank-services-api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <name>bank-services-api</name>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.0.RELEASE</version>
+        <version>2.0.4.RELEASE</version>
     </parent>
 
     <properties>
-        <apache-cxf.version>3.2.4</apache-cxf.version>
-        <swagger-ui.version>3.13.0</swagger-ui.version>
-        <maven-surefire-plugin.version>2.21.0</maven-surefire-plugin.version>
+        <apache-cxf.version>3.2.5</apache-cxf.version>
+        <swagger-ui.version>3.18.2</swagger-ui.version>
+        <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
     </properties>
 
     <dependencies>
